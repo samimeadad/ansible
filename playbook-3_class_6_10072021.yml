@@ -1,0 +1,36 @@
+- name: Deploy and start Apache HTTPD service
+  hosts: rhel8
+
+  tasks:
+          - name: Required packages are installed and up to date
+            yum:
+                    name:
+                            - "{{web_pkg}}"
+                            - "{{firewall_pkg}}"
+                            - "{{python_pkg}}"
+                    state: latest
+
+          - name: The "{{firewall_service}}" is started and enabled
+            service:
+                name: "{{firewall_service}}"
+                state: started
+                enabled: true
+
+          - name: The "{{web_service}}" is started and enabled
+            service:
+                name: "{{web_service}}"
+                state: started
+                enabled: true
+
+          - name: Web content copy in place
+            copy:
+                    content: 'Hello World!'
+                    dest: /var/www/html/index.html
+
+          - name: The firewall port "{{rule}}" is open
+            firewalld:
+                    service: "{{rule}}"
+                    permanent: yes
+                    state: enabled
+                    immediate: true
+...

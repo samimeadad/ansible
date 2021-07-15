@@ -1,0 +1,21 @@
+---
+- name: play1
+  hosts: web
+  gather_facts: no
+  tasks:
+        - name: httpd package install
+          yum:
+                name: httpd
+                state: present
+
+        - name: copy file
+          copy:
+               src: files/index.html
+               dest: /var/www/html/index.html
+
+        - name: service start and enable
+          service:
+                name: httpd
+                state: started
+                enabled: yes
+...
