@@ -1,0 +1,40 @@
+---
+- name: play1
+  hosts: web
+  gather_facts: no
+  tasks:
+    - name: service stop and disable
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+
+    - name: remove file
+      file:
+        path: /var/www/html/index.html
+        state: absent
+
+    - name: httpd package remove
+      yum:
+        name: httpd
+        state: removed
+
+- name: play2
+  hosts: database
+  gather_facts: no
+  tasks:
+    - name: service stop and disable
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+
+    - name: remove file
+      file:
+        path: /var/www/html/index.html
+        state: absent
+
+    - name: httpd package remove
+      yum:
+        name: httpd
+        state: removed

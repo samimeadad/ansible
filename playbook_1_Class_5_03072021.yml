@@ -3,19 +3,82 @@
   hosts: web
   gather_facts: no
   tasks:
-        - name: httpd package install
-          yum:
-                name: httpd
-                state: present
+    - name: httpd package install
+      yum:
+        name: httpd
+        state: latest
 
-        - name: copy file
-          copy:
-               src: files/index.html
-               dest: /var/www/html/index.html
+    - name: firewalld package install
+      yum:
+        name: firewalld
+        state: latest
 
-        - name: service start and enable
-          service:
-                name: httpd
-                state: started
-                enabled: yes
-...
+    - name: copy file
+      copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+
+    - name: httpd service start and enable
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: firewalld service start and enable
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: permit traffic in default zone for http service
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+
+    - name: reload firewalld service after http allow
+      service:
+        name: firewalld
+        state: reloaded
+
+- name: play2
+  hosts: database
+  gather_facts: no
+  tasks:
+    - name: httpd package install
+      yum:
+        name: httpd
+        state: present
+
+    - name: firewalld package install
+      yum:
+        name: firewalld
+        state: latest
+
+    - name: copy file
+      copy:
+        src: files/index.html
+        dest: /var/www/html/index.html
+
+    - name: service start and enable
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: firewalld service start and enable
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: permit traffic in default zone for http service
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+
+    - name: reload firewalld service after http allow
+      service:
+        name: firewalld
+        state: reloaded
